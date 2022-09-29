@@ -1,0 +1,33 @@
+{
+	"name": "my-mode",
+	"version": "1.0.0",
+	"description": "gulp + wp",
+	"main": "index.js",
+	"scripts": {
+		"dev": "gulp",
+		"build": "gulp build --build"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@babel/core": "latest",
+		"@babel/preset-env": "latest",
+		"babel": "latest",
+		"babel-core": "latest",
+		"babel-loader": "latest",
+		"browser-sync": "latest",
+		"compress-images": "latest",
+		"core-js": "latest",
+		"gifsicle": "latest",
+		"gulp": "latest",
+		"gulp-autoprefixer": "latest",
+		"gulp-clean": "latest",
+		"gulp-clean-css": "latest",
+		"gulp-concat": "latest",
+		"gulp-sass": "latest",
+		"pngquant-bin": "latest",
+		"sass": "latest",
+		"webpack": "latest",
+		"webpack-stream": "latest"
+	}
+}
