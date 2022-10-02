@@ -1,12 +1,8 @@
 {
 	"name": "my-mode",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "gulp + wp",
 	"main": "index.js",
-	"scripts": {
-		"dev": "gulp",
-		"build": "gulp build --build"
-	},
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
@@ -16,7 +12,6 @@
 		"babel-core": "latest",
 		"babel-loader": "latest",
 		"browser-sync": "latest",
-		"compress-images": "latest",
 		"core-js": "latest",
 		"gifsicle": "latest",
 		"gulp": "latest",
