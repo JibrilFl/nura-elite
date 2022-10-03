@@ -1,21 +1,29 @@
 const { src, dest, parallel, series, watch } = require('gulp');
 
-const browserSync = require('browser-sync').create();
-const concat = require('gulp-concat');
-const sass = require('gulp-sass')(require('sass'));
-const autoprefixer = require('gulp-autoprefixer');
-const cleancss = require('gulp-clean-css');
-const clean = require('gulp-clean');
-const webpack = require('webpack-stream');
+const browserSync = require('browser-sync').create(),
+	concat = require('gulp-concat'),
+	sass = require('gulp-sass')(require('sass')),
+	autoprefixer = require('gulp-autoprefixer'),
+	cleancss = require('gulp-clean-css'),
+	clean = require('gulp-clean'),
+	webpack = require('webpack-stream'),
+	imagemin = require('gulp-imagemin'),
+	pngquant = require('imagemin-pngquant');
 
 function browsersync() {
 	browserSync.init({ // Инициализация Browsersync
-		server: { baseDir: 'app/' }, // Указываем папку сервера
+		server: { baseDir: 'dist/' }, // Указываем папку сервера
 		notify: false, // Отключаем уведомления
 		online: true, // Режим работы: true или false
 		port: 8000
 	})
 };
+
+function html() {
+	return src('app/*.html')
+	.pipe(dest('dist/'))
+	.pipe(browserSync.stream()); 
+}
 
 function js() {
 	return src('app/js/app.js')
@@ -44,7 +52,7 @@ function js() {
 				]
 			}
 		}))
-		.pipe(dest('app/js/'))
+		.pipe(dest('dist/js/'))
 		.on('end', browserSync.reload);
 };
 
@@ -54,8 +62,19 @@ function styles() {
 		.pipe(concat('style.min.css')) // Конкатенируем в файл style.min.css
 		.pipe(autoprefixer({ ovverideBrowserslist: ['last 10 versions'], grid: true })) // Создаем префиксы с помощью Autoprefixer
 		.pipe(cleancss({ level: { 1: { specialComments: 0 } }, /* format: 'beautify' */ })) // Минифицируем стили
-		.pipe(dest('app/css/')) // Выгрузим результат в папку "app/css/"
+		.pipe(dest('dist/css/')) // Выгрузим результат в папку "app/css/"
 		.pipe(browserSync.stream()); // Триггерим Browsersync для обновления страницы
+};
+
+function images() {
+	return src('app/img/**/*', {base: 'app'})
+		.pipe(imagemin({
+			progressive: true,
+			svgoPlugins: [{removeViewBox: false}],
+			use: [pngquant()]
+		}))
+		.pipe(dest('dist/'))
+		.pipe(browserSync.stream());
 };
 
 function clear() {
@@ -64,27 +83,18 @@ function clear() {
 };
 
 function startwatch() {
-	watch(['app/js/**/*.js', '!app/js/*.min.js'], js);
+	watch('app/js/**/*.js', js);
 	watch('app/css/**/*.scss', styles);
-	watch('app/**/*.html').on('change', browserSync.reload);
+	watch('app/img/**/*', images)
+	watch('app/*.html', html);
 };
-
-function buildcopy() {
-	return src([ // Выбираем нужные файлы
-		'app/css/**/*.min.css',
-		'app/js/**/*.min.js',
-		'app/img/**/*',
-		'app/**/*.html',
-	], { base: 'app' }) // Параметр "base" сохраняет структуру проекта при копировании
-		.pipe(dest('dist')) // Выгружаем в папку с финальной сборкой
-}
 
 exports.browsersync = browsersync;
 exports.js = js;
 exports.styles = styles;
+exports.images = images;
+exports.html = html;
+
 exports.clear = clear;
-exports.buildcopy = buildcopy;
 
-exports.build = series(clear, styles, js, buildcopy);
-
-exports.default = parallel(styles, js, browsersync, startwatch);
+exports.default = parallel(html, styles, js, images, browsersync, startwatch);
