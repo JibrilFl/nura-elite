@@ -28,9 +28,9 @@ function html() {
 function js() {
 	return src('app/js/app.js')
 		.pipe(webpack({
-			mode: 'production',
+			mode: 'development',
 			output: {
-				filename: 'app.min.js'
+				filename: 'app.js'
 			},
 			watch: false,
 			module: {
